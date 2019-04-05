@@ -32,3 +32,7 @@ module.exports = {
     // 'gatsby-plugin-offline',
   ],
 }
+
+module.exports = {
+  pathPrefix: "/realtime-bus-mapping",
+}
