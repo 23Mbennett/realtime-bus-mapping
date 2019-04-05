@@ -58,8 +58,8 @@ class GtfsMap extends Component {
               "line-cap": "round"
           },
       });
-      // let geojson = 'https://dax2h6sk92.execute-api.us-east-1.amazonaws.com/dev/'
-      let geojson_points = 'http://localhost:3000/'
+      let geojson_points = 'https://dax2h6sk92.execute-api.us-east-1.amazonaws.com/dev/'
+      // let geojson_points = 'http://localhost:3000/'
       this.map.addSource('Realtime Bus', {
         type: 'geojson',
         data: geojson_points
