@@ -111,28 +111,28 @@ class GtfsMap extends Component {
       img.onload = ()=> this.map.addImage('bus', img)
       img.src = symbol
 
-      this.map.addLayer({
-          "id": "symbols",
-          "type": "symbol",
-          "source": "Bus Route",
-          "layout": {
-            "icon-image": "bus",
-            "icon-text-fit":'none',
-            "icon-text-fit-padding":[3,3,3,3],
-            "symbol-placement":  "line",
-            'symbol-spacing':1000,
-            'icon-rotation-alignment': 'viewport',
-            'text-rotation-alignment':'viewport',
-            "text-size": 12,
-            "text-font": ["Open Sans Bold", "Arial Unicode MS Bold"],
-            "text-transform": "uppercase",
-            "text-letter-spacing": 0.05,
-            "text-offset": [0, 0]
-          },
-          "paint": {
-              "text-color": "red"
-          }
-      });
+      // this.map.addLayer({
+      //     "id": "symbols",
+      //     "type": "symbol",
+      //     "source": "Bus Route",
+      //     "layout": {
+      //       "icon-image": "bus",
+      //       "icon-text-fit":'none',
+      //       "icon-text-fit-padding":[3,3,3,3],
+      //       "symbol-placement":  "line",
+      //       'symbol-spacing':1000,
+      //       'icon-rotation-alignment': 'viewport',
+      //       'text-rotation-alignment':'viewport',
+      //       "text-size": 12,
+      //       "text-font": ["Open Sans Bold", "Arial Unicode MS Bold"],
+      //       "text-transform": "uppercase",
+      //       "text-letter-spacing": 0.05,
+      //       "text-offset": [0, 0]
+      //     },
+      //     "paint": {
+      //         "text-color": "red"
+      //     }
+      // });
 
       this.map.on("mousemove", "Realtime Bus", this.move.bind(this));
       this.map.on("mouseleave", "Realtime Bus", this.leave.bind(this));
@@ -224,7 +224,7 @@ class GtfsMap extends Component {
         });
 
         this.map.getSource('Bus Route').setData(geojson);
-        this.map.setLayoutProperty('symbols', 'text-field', String(this.state.route_short_name))
+        // this.map.setLayoutProperty('symbols', 'text-field', String(this.state.route_short_name))
       }
     }
   }
