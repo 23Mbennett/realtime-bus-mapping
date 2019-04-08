@@ -1,0 +1,46 @@
+@import url('https://fonts.googleapis.com/css?family=Sarabun:200i,800i');
+
+.container {
+  background-color: black;
+  padding:20px;
+  color:white;
+  height: 200px;
+  width: 300px;
+  border-style: solid;
+  border-width: 3px;
+  border-color: white;
+  padding: 15px;
+
+}
+
+.underline{
+  text-decoration: underline;
+
+}
+
+h1 {
+	font-size:40px;
+	line-height:40px;
+	letter-spacing: 0px;
+  margin-top: -10px;
+  margin-bottom: -10px;
+  font-family: 'Sarabun', sans-serif;
+  font-weight: 800;
+
+}
+
+h2 {
+  font-size:20px;
+  line-height:20px;
+  color:#f2ed5c;
+  font-family: 'Sarabun', sans-serif;
+  font-weight: 800;
+}
+
+p{
+  font-size:12px;
+  font-family: 'Sarabun', sans-serif;
+  font-style: italic;
+  font-weight: 200;
+  color: #898989;
+}

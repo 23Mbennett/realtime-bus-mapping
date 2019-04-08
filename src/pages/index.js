@@ -1,8 +1,23 @@
 import React, {Component} from "react"
-
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { center } from '@turf/turf'
+import { bbox} from '@turf/turf'
+import styled from "@emotion/styled"
+import { css } from "@emotion/core"
+
+import symbol from '../images/symbol_background.png';
+
+import Display from "../components/display"
+
+const Container = styled.div`
+  display: inline-block;
+  position: absolute;
+  bottom: 50px;
+  left:50px;
+  padding:0;
+  margin:0;
+`
+
 
 mapboxgl.accessToken = 'pk.eyJ1Ijoic2FhZGlxbSIsImEiOiJjamJpMXcxa3AyMG9zMzNyNmdxNDlneGRvIn0.wjlI8r1S_-xxtq2d-W5qPA';
 
@@ -13,11 +28,16 @@ class GtfsMap extends Component {
 
   constructor(props) {
     super(props);
+    this.count_bus_num = this.count_bus_num.bind(this)
     this.state = {
       lng: -114.0708,
       lat: 51.0486,
       zoom: 10.2,
-      selected_bus: null
+      selected_bus: null,
+      num_buses: null,
+      route_short_name: null,
+      route_long_name: null,
+      bus_id:null
     };
   }
 
@@ -28,7 +48,6 @@ class GtfsMap extends Component {
    }
 
   componentDidMount() {
-
     const {lng, lat, zoom } = this.state;
     this.map = new mapboxgl.Map({
       container: this.mapContainer,
@@ -60,6 +79,7 @@ class GtfsMap extends Component {
       });
       let geojson_points = 'https://dax2h6sk92.execute-api.us-east-1.amazonaws.com/dev/'
       // let geojson_points = 'http://localhost:3000/'
+
       this.map.addSource('Realtime Bus', {
         type: 'geojson',
         data: geojson_points
@@ -86,6 +106,10 @@ class GtfsMap extends Component {
               ]
           }
       });
+
+      let img = new Image(27,27)
+      img.onload = ()=> this.map.addImage('bus', img)
+      img.src = symbol
 
       this.map.addLayer({
           "id": "symbols",
@@ -114,11 +138,30 @@ class GtfsMap extends Component {
       this.map.on("mouseleave", "Realtime Bus", this.leave.bind(this));
       this.map.on("click", "Realtime Bus", this.click.bind(this));
 
-      setInterval(() => {
+      this.count_bus_num(geojson_points)
+
+      let update_num = 0
+      let interval = setInterval(() => {
+          update_num += 1;
+          if(update_num === 3){ //stop updating after three intervals
+               clearInterval(interval);
+           }
           this.map.getSource('Realtime Bus').setData(geojson_points)
-          console.log("update map")
+          console.log("map updated: "+update_num)
+
+          this.count_bus_num(geojson_points)
+
         }, 45000);
+
     });
+
+
+  }
+
+  async count_bus_num(a){
+    let response = await fetch(a);
+    let data = await response.json();
+    this.setState({ num_buses: data.features.length });
   }
 
   move(e){
@@ -146,6 +189,7 @@ class GtfsMap extends Component {
 
   async click(e){
     this.map.getCanvas().style.cursor = 'pointer';
+    this.setState({bus_id: e.features[0].id})
     if (e.features.length > 0) {
       if (clickedStateId) {
         this.map.setFeatureState({source: 'Realtime Bus', id: clickedStateId}, { click: false});
@@ -164,24 +208,23 @@ class GtfsMap extends Component {
       let trip_data = await trip_response.json();
       let trip_short_name = trip_data.route_short_name;
 
-      if (trip_short_name) {
-        await this.setStateAsync({selected_bus: trip_short_name});
+      this.setState({route_long_name: trip_data.route_long_name})
+      this.setState({route_short_name: trip_short_name});
 
-        let geojson = 'https://data.calgary.ca/resource/hpnd-riq4.geojson?route_short_name='+this.state.selected_bus
+      if (trip_short_name) {
+
+        let geojson = 'https://data.calgary.ca/resource/hpnd-riq4.geojson?route_short_name='+this.state.route_short_name
 
         let response = await fetch(geojson);
         let data = await response.json();
 
-        let turf_center = center(data); //find center of bus route using Turf
-        let center_coord = turf_center.geometry.coordinates;
-
-        this.map.flyTo({
-         center: center_coord,
-         zoom: 12
+        let bounds= bbox(data); //find bounding box using Turf
+        this.map.fitBounds(bounds, {
+          padding: {top: 50, bottom:50, left: 50, right: 50}
         });
 
         this.map.getSource('Bus Route').setData(geojson);
-        this.map.setLayoutProperty('symbols', 'text-field', String(this.state.selected_bus))
+        this.map.setLayoutProperty('symbols', 'text-field', String(this.state.route_short_name))
       }
     }
   }
@@ -189,11 +232,18 @@ class GtfsMap extends Component {
   render(){
 
     return(
+      <div>
         <div ref={el => this.mapContainer = el} style={{position: 'absolute',
           top: 0,
           bottom: 0,
           width: '100%',
-          height: '100%'}} />
+          height: '100%'}}/>
+
+        <Container>
+          <Display busCount={this.state.num_buses} routeShortName={this.state.route_short_name? this.state.route_short_name:""} routeLongName={this.state.route_long_name} />
+        </Container>
+
+      </div>
     );
   }
 }
