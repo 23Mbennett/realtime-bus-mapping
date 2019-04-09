@@ -18,7 +18,6 @@ const Container = styled.div`
   margin:0;
 `
 
-
 mapboxgl.accessToken = 'pk.eyJ1Ijoic2FhZGlxbSIsImEiOiJjamJpMXcxa3AyMG9zMzNyNmdxNDlneGRvIn0.wjlI8r1S_-xxtq2d-W5qPA';
 
 let hoveredStateId =  null;
@@ -54,7 +53,7 @@ class GtfsMap extends Component {
       style: 'mapbox://styles/saadiqm/cju238axg1xac1fqi1xisuwwa',
       center: [lng, lat],
       zoom,
-      maxZoom: 12,
+      maxZoom: 13,
       minZoom: 10.2,
     });
     this.map.on('load', () => {
@@ -94,11 +93,10 @@ class GtfsMap extends Component {
                 '#f4cb42',
                 '#ff0000'
               ],
-              "circle-radius":["case",
-                ["boolean", ["feature-state", "click_radius"], false],
-                9,
-                7
-              ],
+              'circle-radius': {
+                'base': 1.2,
+                'stops': [[10, 4], [14, 10]]
+                },
               "circle-opacity": ["case",
                 ["boolean", ["feature-state", "hover"], false],
                 1,
@@ -153,6 +151,7 @@ class GtfsMap extends Component {
 
         }, 45000);
 
+        this.map.addControl(new mapboxgl.NavigationControl());
     });
 
 

@@ -4,10 +4,10 @@
   background-color: black;
   padding:20px;
   color:white;
-  height: 200px;
+  height: 240px;
   width: 300px;
   border-style: solid;
-  border-width: 3px;
+  border-width: 4px;
   border-color: white;
   padding: 15px;
 
@@ -38,7 +38,7 @@ h2 {
 }
 
 p{
-  font-size:12px;
+  font-size:13px;
   font-family: 'Sarabun', sans-serif;
   font-style: italic;
   font-weight: 200;
